@@ -36,11 +36,11 @@ public class FastCollinearPoints {
 		for (int i = 0; i < points.length; i++) {
 			// always preserve the previous natural order
 			Point[] slopeOrder = points.clone();
-			// sort on the slope with respect to the chosen point which is now
+			// sort points on the slope with respect to the chosen point which is now treated as
 			// origin, considered in
-			// natural order
+			// natural order, sort has to be stable as we require natural order
 			Arrays.sort(slopeOrder, slopeOrder[i].slopeOrder());
-			// will hold the slopes with respect to the chosen point
+			// will hold the slopes with respect to the chosen point, which now serves as origin
 			Double[] slopes = new Double[slopeOrder.length];
 			// calculate slopes with respect to the point chosen
 			for (int j = 0; j < slopeOrder.length; j++) {
@@ -55,8 +55,10 @@ public class FastCollinearPoints {
 					end++;
 				// if we have found a set of 4 or more collinear points
 				if (end - start > 2) {
-					// if the starting point is the lowest by natural order, to
-					// prevent subsegments to go in the list
+					// if the current origin is the lowest by natural order, then
+					// only it should be considered for segment, otherwise always the
+					// second in list is the lowest in natural order, as the sort is stable
+					// this prevent sub-segments to go into the list
 					if (points[i].compareTo(slopeOrder[start]) < 0) {
 						segments.add(new LineSegment(points[i],
 								slopeOrder[end - 1]));
